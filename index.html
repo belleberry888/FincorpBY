@@ -18,6 +18,34 @@ body {
     color: #172033;
 }
 
+/* Login Page */
+.login-wrap{
+    width:100%;
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+.login-card{
+    width:420px;
+    background:white;
+    padding:30px;
+    border-radius:16px;
+    box-shadow:0 4px 20px #00000015;
+}
+.login-card h2{margin-top:0}
+.login-card input{
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+    border:1px solid #dce1e8;
+    border-radius:8px;
+    font-size:14px;
+}
+.lang-switch-login{
+    margin-top:10px;
+}
+
 /* ================= SIDEBAR ================= */
 
 .sidebar {
@@ -72,6 +100,8 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 25px;
+    flex-wrap:wrap;
+    gap:10px;
 }
 
 .header h1 {
@@ -94,7 +124,15 @@ body {
     cursor: pointer;
     font-weight: bold;
 }
-
+.btn-danger{
+    background:#c12f3e;
+}
+.btn-danger:hover{
+    background:#a02430;
+}
+.btn-lang{
+    background:#334155;
+}
 .btn:hover {
     background: #4338ca;
 }
@@ -141,6 +179,7 @@ body {
     border-bottom: 1px solid #e5e8ef;
     display: flex;
     gap: 10px;
+    flex-wrap:wrap;
 }
 
 .search {
@@ -465,9 +504,22 @@ th {
 
 
 <body>
+<!-- Login Page -->
+<div id="loginPage" class="login-wrap">
+    <div class="login-card">
+        <h2 data-i18n="loginTitle">Staff Login ClientFlow CRM</h2>
+        <input type="text" id="loginUser" data-i18n-placeholder="userPlaceholder" placeholder="Staff Account">
+        <input type="password" id="loginPwd" data-i18n-placeholder="pwdPlaceholder" placeholder="Password">
+        <button class="btn" onclick="doLogin()" data-i18n="loginBtn">Login</button>
+        <p style="margin:10px 0;color:#666" data-i18n="testAcc">Test account: staff | Password:123456</p>
+        <div class="lang-switch-login">
+            <button class="btn btn-lang" onclick="switchLang()">中文 / English</button>
+        </div>
+    </div>
+</div>
 
 <!-- ================= SIDEBAR ================= -->
-
+<div id="crmPage" style="display:none;">
 <div class="sidebar">
 
     <div class="logo">
@@ -476,27 +528,27 @@ th {
 
     <div class="menu">
 
-        <button class="active" onclick="dashboardPage(this)">
+        <button class="active" onclick="dashboardPage(this)" data-i18n="menuDashboard">
             📊 Dashboard
         </button>
 
-        <button onclick="customersPage(this)">
+        <button onclick="customersPage(this)" data-i18n="menuCustomer">
             👥 Customers
         </button>
 
-        <button onclick="loanTypesPage(this)">
+        <button onclick="loanTypesPage(this)" data-i18n="menuLoan">
             💰 Loan Types
         </button>
 
-        <button onclick="applicationsPage(this)">
+        <button onclick="applicationsPage(this)" data-i18n="menuApp">
             📄 Applications
         </button>
 
-        <button onclick="followupPage(this)">
+        <button onclick="followupPage(this)" data-i18n="menuFollow">
             📅 Follow Up
         </button>
 
-        <button onclick="reportsPage(this)">
+        <button onclick="reportsPage(this)" data-i18n="menuReport">
             📈 Reports
         </button>
 
@@ -516,13 +568,16 @@ th {
     <div class="header">
 
         <div>
-            <h1>Dashboard</h1>
-            <p>Client overview and application progress</p>
+            <h1 data-i18n="dashTitle">Dashboard</h1>
+            <p data-i18n="dashSub">Client overview and application progress</p>
         </div>
-
-        <button class="btn" onclick="openCustomerModal()">
-            + Add Customer
-        </button>
+        <div style="display:flex;gap:8px;align-items:center">
+            <button class="btn btn-lang" onclick="switchLang()">中文 / English</button>
+            <button class="btn" onclick="openCustomerModal()" data-i18n="addCustomerBtn">
+                + Add Customer
+            </button>
+            <button class="btn btn-danger" onclick="logout()" data-i18n="logoutBtn">Logout</button>
+        </div>
 
     </div>
 
@@ -530,27 +585,27 @@ th {
     <div class="cards">
 
         <div class="card">
-            <div class="card-title">TOTAL CUSTOMERS</div>
+            <div class="card-title" data-i18n="totalCus">TOTAL CUSTOMERS</div>
             <div class="card-number" id="totalCustomers">0</div>
         </div>
 
         <div class="card">
-            <div class="card-title">NEW LEADS</div>
+            <div class="card-title" data-i18n="newLead">NEW LEADS</div>
             <div class="card-number" id="newLeads">0</div>
         </div>
 
         <div class="card">
-            <div class="card-title">PENDING DOCUMENTS</div>
+            <div class="card-title" data-i18n="pendingDoc">PENDING DOCUMENTS</div>
             <div class="card-number" id="pendingDocs">0</div>
         </div>
 
         <div class="card">
-            <div class="card-title">APPROVED</div>
+            <div class="card-title" data-i18n="appr">APPROVED</div>
             <div class="card-number" id="approved">0</div>
         </div>
 
         <div class="card">
-            <div class="card-title">DISBURSED</div>
+            <div class="card-title" data-i18n="disb">DISBURSED</div>
             <div class="card-number" id="disbursed">0</div>
         </div>
 
@@ -564,6 +619,7 @@ th {
             <input
                 class="search"
                 id="search"
+                data-i18n-placeholder="searchPh"
                 placeholder="Search customer name / phone..."
                 oninput="renderCustomers()"
             >
@@ -574,7 +630,7 @@ th {
                 onchange="renderCustomers()"
             >
 
-                <option value="">All Status</option>
+                <option value="" data-i18n="allStatus">All Status</option>
                 <option>New</option>
                 <option>Contacted</option>
                 <option>Pending</option>
@@ -593,13 +649,13 @@ th {
             <thead>
 
                 <tr>
-                    <th>Customer</th>
-                    <th>Phone</th>
-                    <th>Loan Type</th>
-                    <th>Amount</th>
-                    <th>Status</th>
-                    <th>Updated</th>
-                    <th></th>
+                    <th data-i18n="colCus">Customer</th>
+                    <th data-i18n="colPhone">Phone</th>
+                    <th data-i18n="colLoan">Loan Type</th>
+                    <th data-i18n="colAmt">Amount</th>
+                    <th data-i18n="colStat">Status</th>
+                    <th data-i18n="colUpdate">Updated</th>
+                    <th data-i18n="colAct">Action</th>
                 </tr>
 
             </thead>
@@ -626,54 +682,54 @@ th {
 
 <div class="modal-box">
 
-<h2>Add Customer</h2>
+<h2 data-i18n="modalAddCus">Add Customer</h2>
 
 <form id="customerForm">
 
 <div class="form-grid">
 
 <div class="form-group">
-<label>Full Name</label>
+<label data-i18n="lblName">Full Name</label>
 <input id="customerName" required>
 </div>
 
 <div class="form-group">
-<label>Phone</label>
+<label data-i18n="lblPhone">Phone</label>
 <input id="customerPhone" required>
 </div>
 
 <div class="form-group">
-<label>Email</label>
+<label data-i18n="lblEmail">Email</label>
 <input id="customerEmail">
 </div>
 
 <div class="form-group">
-<label>IC / Passport</label>
+<label data-i18n="lblIC">IC / Passport</label>
 <input id="customerIC">
 </div>
 
 <div class="form-group">
-<label>Date of Birth</label>
+<label data-i18n="lblDOB">Date of Birth</label>
 <input id="customerDOB" type="date">
 </div>
 
 <div class="form-group">
-<label>Occupation</label>
+<label data-i18n="lblJob">Occupation</label>
 <input id="customerJob">
 </div>
 
 <div class="form-group">
-<label>Company</label>
+<label data-i18n="lblCompany">Company</label>
 <input id="customerCompany">
 </div>
 
 <div class="form-group">
-<label>Monthly Income (RM)</label>
+<label data-i18n="lblIncome">Monthly Income (RM)</label>
 <input id="customerIncome" type="number">
 </div>
 
 <div class="form-group">
-<label>Loan Type</label>
+<label data-i18n="lblLoanType">Loan Type</label>
 
 <select id="customerLoanType">
 
@@ -691,13 +747,13 @@ th {
 </div>
 
 <div class="form-group">
-<label>Loan Amount (RM)</label>
+<label data-i18n="lblLoanAmt">Loan Amount (RM)</label>
 <input id="customerAmount" type="number">
 </div>
 
 <div class="form-group">
 
-<label>Status</label>
+<label data-i18n="lblStatus">Status</label>
 
 <select id="customerStatus">
 
@@ -715,7 +771,7 @@ th {
 
 <div class="form-group full">
 
-<label>Notes</label>
+<label data-i18n="lblNote">Notes</label>
 
 <textarea id="customerNotes"></textarea>
 
@@ -729,13 +785,13 @@ th {
 <button
 type="button"
 class="btn cancel"
-onclick="closeCustomerModal()">
+onclick="closeCustomerModal()" data-i18n="btnCancel">
 
 Cancel
 
 </button>
 
-<button class="btn">
+<button class="btn" data-i18n="btnSave">
 
 Save Customer
 
@@ -756,7 +812,7 @@ Save Customer
 
 <div class="modal-box">
 
-<h2>Add Loan Application</h2>
+<h2 data-i18n="modalAddApp">Add Loan Application</h2>
 
 <form id="applicationForm">
 
@@ -764,7 +820,7 @@ Save Customer
 
 <div class="form-group">
 
-<label>Customer</label>
+<label data-i18n="lblCusSel">Customer</label>
 
 <select id="applicationCustomer" required></select>
 
@@ -773,7 +829,7 @@ Save Customer
 
 <div class="form-group">
 
-<label>Loan Type</label>
+<label data-i18n="lblLoanTy">Loan Type</label>
 
 <select id="applicationLoanType">
 
@@ -793,7 +849,7 @@ Save Customer
 
 <div class="form-group">
 
-<label>Loan Amount (RM)</label>
+<label data-i18n="lblAmt2">Loan Amount (RM)</label>
 
 <input id="applicationAmount" type="number">
 
@@ -802,7 +858,7 @@ Save Customer
 
 <div class="form-group">
 
-<label>Tenure (Months)</label>
+<label data-i18n="lblTenure">Tenure (Months)</label>
 
 <input id="applicationTenure" type="number">
 
@@ -811,7 +867,7 @@ Save Customer
 
 <div class="form-group">
 
-<label>Bank / Lender</label>
+<label data-i18n="lblBank">Bank / Lender</label>
 
 <input id="applicationBank">
 
@@ -820,7 +876,7 @@ Save Customer
 
 <div class="form-group">
 
-<label>Interest Rate (%)</label>
+<label data-i18n="lblRate">Interest Rate (%)</label>
 
 <input id="applicationRate" type="number" step="0.01">
 
@@ -829,7 +885,7 @@ Save Customer
 
 <div class="form-group">
 
-<label>Monthly Instalment (RM)</label>
+<label data-i18n="lblInst">Monthly Instalment (RM)</label>
 
 <input id="applicationInstalment" type="number">
 
@@ -838,7 +894,7 @@ Save Customer
 
 <div class="form-group">
 
-<label>Status</label>
+<label data-i18n="lblStat2">Status</label>
 
 <select id="applicationStatus">
 
@@ -857,7 +913,7 @@ Save Customer
 
 <div class="form-group">
 
-<label>Application Date</label>
+<label data-i18n="lblAppDate">Application Date</label>
 
 <input id="applicationDate" type="date">
 
@@ -866,7 +922,7 @@ Save Customer
 
 <div class="form-group full">
 
-<label>Notes</label>
+<label data-i18n="lblNote2">Notes</label>
 
 <textarea id="applicationNotes"></textarea>
 
@@ -880,13 +936,13 @@ Save Customer
 <button
 type="button"
 class="btn cancel"
-onclick="closeApplicationModal()">
+onclick="closeApplicationModal()" data-i18n="btnCancel">
 
 Cancel
 
 </button>
 
-<button class="btn">
+<button class="btn" data-i18n="btnSave">
 
 Save Application
 
@@ -900,8 +956,225 @@ Save Application
 
 </div>
 
+</div>
 
 <script>
+// ===== Bilingual Dictionary =====
+const langDict = {
+    en:{
+        loginTitle:"Staff Login ClientFlow CRM",
+        userPlaceholder:"Staff Account",
+        pwdPlaceholder:"Password",
+        loginBtn:"Login",
+        testAcc:"Test account: staff | Password:123456",
+        logoutBtn:"Logout",
+        menuDashboard:"📊 Dashboard",
+        menuCustomer:"👥 Customers",
+        menuLoan:"💰 Loan Types",
+        menuApp:"📄 Applications",
+        menuFollow:"📅 Follow Up",
+        menuReport:"📈 Reports",
+        dashTitle:"Dashboard",
+        dashSub:"Client overview and application progress",
+        addCustomerBtn:"+ Add Customer",
+        totalCus:"TOTAL CUSTOMERS",
+        newLead:"NEW LEADS",
+        pendingDoc:"PENDING DOCUMENTS",
+        appr:"APPROVED",
+        disb:"DISBURSED",
+        searchPh:"Search customer name / phone...",
+        allStatus:"All Status",
+        colCus:"Customer",
+        colPhone:"Phone",
+        colLoan:"Loan Type",
+        colAmt:"Amount",
+        colStat:"Status",
+        colUpdate:"Updated",
+        colAct:"Action",
+        modalAddCus:"Add Customer",
+        lblName:"Full Name",
+        lblPhone:"Phone",
+        lblEmail:"Email",
+        lblIC:"IC / Passport",
+        lblDOB:"Date of Birth",
+        lblJob:"Occupation",
+        lblCompany:"Company",
+        lblIncome:"Monthly Income (RM)",
+        lblLoanType:"Loan Type",
+        lblLoanAmt:"Loan Amount (RM)",
+        lblStatus:"Status",
+        lblNote:"Notes",
+        btnCancel:"Cancel",
+        btnSave:"Save Customer",
+        modalAddApp:"Add Loan Application",
+        lblCusSel:"Customer",
+        lblLoanTy:"Loan Type",
+        lblAmt2:"Loan Amount (RM)",
+        lblTenure:"Tenure (Months)",
+        lblBank:"Bank / Lender",
+        lblRate:"Interest Rate (%)",
+        lblInst:"Monthly Instalment (RM)",
+        lblStat2:"Status",
+        lblAppDate:"Application Date",
+        lblNote2:"Notes",
+        view:"View",
+        del:"Delete",
+        delConfirm:"Are you sure you want to delete this customer? All data will be lost, cannot recover!",
+        noData:"No customers found.",
+        addAppBtn:"+ Add Loan Application",
+        addUpdateBtn:"+ Add Update",
+        backBtn:"← Back to Customers",
+        backDash:"← Back to Dashboard",
+        personalInfo:"Personal Information",
+        empFin:"Employment & Financial",
+        notes:"Notes",
+        loanApps:"Loan Applications",
+        timeline:"Update Timeline",
+        noNote:"No notes yet.",
+        noApp:"No loan applications yet.",
+        enterUpdate:"Enter follow-up / update:",
+        loanCat:"Loan application categories",
+        trackApp:"Track all loan applications",
+        followTitle:"Follow Up",
+        followSub:"Customer follow-up management",
+        recentUpdate:"Recent Customer Updates",
+        noUpdate:"No update",
+        reportTitle:"Reports",
+        reportSub:"CRM performance overview",
+        appCount:"APPLICATIONS",
+        totalAppAmt:"TOTAL APPLICATION",
+        loanSummary:"Loan Type Summary",
+        cus:"Customers",
+        applications:"Applications",
+        totalAmt:"Total Amount",
+        wrongLogin:"Incorrect account or password!"
+    },
+    zh:{
+        loginTitle:"员工登录 ClientFlow CRM",
+        userPlaceholder:"员工账号",
+        pwdPlaceholder:"密码",
+        loginBtn:"登录",
+        testAcc:"测试账号：staff | 密码：123456",
+        logoutBtn:"退出登录",
+        menuDashboard:"📊 仪表盘",
+        menuCustomer:"👥 客户",
+        menuLoan:"💰 贷款类型",
+        menuApp:"📄 申请单",
+        menuFollow:"📅 跟进记录",
+        menuReport:"📈 报表",
+        dashTitle:"仪表盘",
+        dashSub:"客户总览与申请进度",
+        addCustomerBtn:"+ 新增客户",
+        totalCus:"客户总数",
+        newLead:"新线索",
+        pendingDoc:"待补文件",
+        appr:"已批准",
+        disb:"已放款",
+        searchPh:"搜索客户姓名/电话...",
+        allStatus:"全部状态",
+        colCus:"客户",
+        colPhone:"电话",
+        colLoan:"贷款类型",
+        colAmt:"金额",
+        colStat:"状态",
+        colUpdate:"更新时间",
+        colAct:"操作",
+        modalAddCus:"新增客户",
+        lblName:"全名",
+        lblPhone:"电话",
+        lblEmail:"邮箱",
+        lblIC:"身份证/护照",
+        lblDOB:"出生日期",
+        lblJob:"职业",
+        lblCompany:"公司",
+        lblIncome:"月收入 (马币)",
+        lblLoanType:"贷款类型",
+        lblLoanAmt:"贷款金额 (马币)",
+        lblStatus:"状态",
+        lblNote:"备注",
+        btnCancel:"取消",
+        btnSave:"保存客户",
+        modalAddApp:"新增贷款申请",
+        lblCusSel:"客户",
+        lblLoanTy:"贷款类型",
+        lblAmt2:"贷款金额 (马币)",
+        lblTenure:"期数（月）",
+        lblBank:"银行/机构",
+        lblRate:"利率(%)",
+        lblInst:"每月供款(马币)",
+        lblStat2:"状态",
+        lblAppDate:"申请日期",
+        lblNote2:"备注",
+        view:"查看",
+        del:"删除",
+        delConfirm:"确定删除该客户？全部资料会永久丢失，无法恢复！",
+        noData:"没有找到客户。",
+        addAppBtn:"+ 新增贷款申请",
+        addUpdateBtn:"+ 添加跟进记录",
+        backBtn:"← 返回客户列表",
+        backDash:"← 返回仪表盘",
+        personalInfo:"个人资料",
+        empFin:"工作与财务信息",
+        notes:"备注",
+        loanApps:"贷款申请记录",
+        timeline:"跟进时间线",
+        noNote:"暂无备注",
+        noApp:"暂无贷款申请",
+        enterUpdate:"输入跟进记录：",
+        loanCat:"贷款申请分类",
+        trackApp:"查看全部贷款申请",
+        followTitle:"跟进管理",
+        followSub:"客户跟进管理",
+        recentUpdate:"最近客户跟进",
+        noUpdate:"暂无记录",
+        reportTitle:"报表",
+        reportSub:"CRM业务数据总览",
+        appCount:"申请数量",
+        totalAppAmt:"申请总金额",
+        loanSummary:"贷款类型汇总",
+        cus:"客户数",
+        applications:"申请数",
+        totalAmt:"总金额",
+        wrongLogin:"账号或密码错误！"
+    }
+};
+let currentLang = localStorage.getItem("crmlang") || "en";
+function switchLang(){
+    currentLang = currentLang === "en" ? "zh" : "en";
+    localStorage.setItem("crmlang",currentLang);
+    renderLang();
+    renderCustomers();
+}
+function renderLang(){
+    const lang = langDict[currentLang];
+    document.querySelectorAll("[data-i18n]").forEach(el=>{
+        el.innerText = lang[el.getAttribute("data-i18n")];
+    })
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>{
+        el.placeholder = lang[el.getAttribute("data-i18n-placeholder")];
+    })
+}
+
+// Login function
+const staffAccount = {user:"staff",pwd:"123456"};
+function doLogin(){
+    let u = document.getElementById("loginUser").value;
+    let p = document.getElementById("loginPwd").value;
+    const lang = langDict[currentLang];
+    if(u === staffAccount.user && p === staffAccount.pwd){
+        localStorage.setItem("crmLogin", "true");
+        document.getElementById("loginPage").style.display="none";
+        document.getElementById("crmPage").style.display="block";
+        renderLang();
+        renderCustomers();
+    }else{
+        alert(lang.wrongLogin);
+    }
+}
+function logout(){
+    localStorage.removeItem("crmLogin");
+    location.reload();
+}
 
 /* =====================================================
    DATA
@@ -952,6 +1225,15 @@ JSON.stringify(customers)
 
 }
 
+// Delete Customer
+function deleteCustomer(id){
+    const lang = langDict[currentLang];
+    if(confirm(lang.delConfirm)){
+        customers = customers.filter(c=>c.id!==id);
+        saveData();
+        renderCustomers();
+    }
+}
 
 /* =====================================================
    DASHBOARD STATS
@@ -982,7 +1264,7 @@ customers.filter(c => c.status === "Disbursed").length;
 ===================================================== */
 
 function renderCustomers() {
-
+    const lang = langDict[currentLang];
 updateStats();
 
 let search =
@@ -1015,7 +1297,7 @@ if (list.length === 0) {
 table.innerHTML = `
 <tr>
 <td colspan="7" style="text-align:center;padding:40px">
-No customers found.
+${lang.noData}
 </td>
 </tr>
 `;
@@ -1074,16 +1356,18 @@ ${c.updated || "-"}
 
 
 <td>
-
 <button
 class="btn"
 style="padding:7px 10px;font-size:11px"
 onclick="openProfile(${c.id})">
-
-View
-
+${lang.view}
 </button>
-
+<button
+class="btn btn-danger"
+style="padding:7px 10px;font-size:11px;margin-left:4px"
+onclick="deleteCustomer(${c.id})">
+${lang.del}
+</button>
 </td>
 
 </tr>
@@ -1244,7 +1528,7 @@ renderCustomers();
 ===================================================== */
 
 function openProfile(id) {
-
+const lang = langDict[currentLang];
 let c =
 customers.find(x => x.id === id);
 
@@ -1262,7 +1546,7 @@ page.innerHTML = `
 class="back"
 onclick="dashboardPage(document.querySelector('.menu button'))">
 
-← Back to Customers
+${lang.backBtn}
 
 </button>
 
@@ -1287,13 +1571,16 @@ ${c.status}
 </div>
 
 
+<div style="display:flex;gap:8px">
 <button
 class="btn"
 onclick="openApplicationModal(${c.id})">
 
-+ Add Loan Application
+${lang.addAppBtn}
 
 </button>
+<button class="btn btn-danger" onclick="deleteCustomer(${c.id})">${lang.del}</button>
+</div>
 
 </div>
 
@@ -1303,23 +1590,23 @@ onclick="openApplicationModal(${c.id})">
 
 <div class="section">
 
-<h3>Personal Information</h3>
+<h3>${lang.personalInfo}</h3>
 
 <div class="details">
 
-<b>Full Name</b>
+<b>${lang.lblName}</b>
 <span>${c.name}</span>
 
-<b>IC / Passport</b>
+<b>${lang.lblIC}</b>
 <span>${c.ic || "-"}</span>
 
-<b>Date of Birth</b>
+<b>${lang.lblDOB}</b>
 <span>${c.dob || "-"}</span>
 
-<b>Phone</b>
+<b>${lang.lblPhone}</b>
 <span>${c.phone}</span>
 
-<b>Email</b>
+<b>${lang.lblEmail}</b>
 <span>${c.email || "-"}</span>
 
 </div>
@@ -1329,25 +1616,25 @@ onclick="openApplicationModal(${c.id})">
 
 <div class="section">
 
-<h3>Employment & Financial</h3>
+<h3>${lang.empFin}</h3>
 
 <div class="details">
 
-<b>Company</b>
+<b>${lang.lblCompany}</b>
 <span>${c.company || "-"}</span>
 
-<b>Position</b>
+<b>${lang.lblJob}</b>
 <span>${c.job || "-"}</span>
 
-<b>Monthly Income</b>
+<b>${lang.lblIncome}</b>
 <span>
 RM ${Number(c.income || 0).toLocaleString()}
 </span>
 
-<b>Loan Type</b>
+<b>${lang.lblLoanType}</b>
 <span>${c.loanType || "-"}</span>
 
-<b>Loan Amount</b>
+<b>${lang.lblLoanAmt}</b>
 <span>
 RM ${Number(c.amount || 0).toLocaleString()}
 </span>
@@ -1361,10 +1648,10 @@ RM ${Number(c.amount || 0).toLocaleString()}
 
 <div class="section">
 
-<h3>Notes</h3>
+<h3>${lang.notes}</h3>
 
 <p>
-${c.notes || "No notes yet."}
+${c.notes || lang.noNote}
 </p>
 
 </div>
@@ -1372,7 +1659,7 @@ ${c.notes || "No notes yet."}
 
 <div class="section">
 
-<h3>Loan Applications</h3>
+<h3>${lang.loanApps}</h3>
 
 <div id="applications-${c.id}">
 
@@ -1385,7 +1672,7 @@ ${renderApplications(c)}
 
 <div class="section">
 
-<h3>Update Timeline</h3>
+<h3>${lang.timeline}</h3>
 
 <div class="timeline">
 
@@ -1411,7 +1698,7 @@ ${(c.events || []).map(e => `
 class="btn"
 onclick="addUpdate(${c.id})">
 
-+ Add Update
+${lang.addUpdateBtn}
 
 </button>
 
@@ -1423,13 +1710,13 @@ onclick="addUpdate(${c.id})">
 
 
 function renderApplications(c) {
-
+const lang = langDict[currentLang];
 if (!c.applications ||
 c.applications.length === 0) {
 
 return `
 <p style="color:#737d90">
-No loan applications yet.
+${lang.noApp}
 </p>
 `;
 
@@ -1463,7 +1750,7 @@ ${a.status}
 
 <div>
 
-<small>Amount</small>
+<small>${lang.lblAmt2}</small>
 
 <br>
 
@@ -1476,7 +1763,7 @@ RM ${Number(a.amount || 0).toLocaleString()}
 
 <div>
 
-<small>Tenure</small>
+<small>${lang.lblTenure}</small>
 
 <br>
 
@@ -1487,7 +1774,7 @@ ${a.tenure || "-"} months
 
 <div>
 
-<small>Interest</small>
+<small>${lang.lblRate}</small>
 
 <br>
 
@@ -1498,7 +1785,7 @@ ${a.rate || "-"}%
 
 <div>
 
-<small>Monthly</small>
+<small>${lang.lblInst}</small>
 
 <br>
 
@@ -1520,12 +1807,12 @@ RM ${Number(a.instalment || 0).toLocaleString()}
 ===================================================== */
 
 function addUpdate(id) {
-
+const lang = langDict[currentLang];
 let c =
 customers.find(x => x.id === id);
 
 let note =
-prompt("Enter follow-up / update:");
+prompt(lang.enterUpdate);
 
 if (!note) return;
 
@@ -1696,7 +1983,7 @@ openProfile(customerId);
 ===================================================== */
 
 function loanTypesPage(btn) {
-
+const lang = langDict[currentLang];
 hideAll();
 
 setActive(btn);
@@ -1727,7 +2014,7 @@ page.innerHTML = `
 class="back"
 onclick="dashboardPage(document.querySelector('.menu button'))">
 
-← Back to Dashboard
+${lang.backDash}
 
 </button>
 
@@ -1736,10 +2023,10 @@ onclick="dashboardPage(document.querySelector('.menu button'))">
 
 <div>
 
-<h1>Loan Types</h1>
+<h1>${lang.menuLoan}</h1>
 
 <p>
-Loan application categories
+${lang.loanCat}
 </p>
 
 </div>
@@ -1748,7 +2035,7 @@ Loan application categories
 class="btn"
 onclick="openCustomerModal()">
 
-+ Add Customer
+${lang.addCustomerBtn}
 
 </button>
 
@@ -1777,7 +2064,7 @@ ${count}
 </div>
 
 <div class="small">
-Customers
+${lang.cus}
 </div>
 
 </div>
@@ -1798,7 +2085,7 @@ Customers
 ===================================================== */
 
 function applicationsPage(btn) {
-
+const lang = langDict[currentLang];
 hideAll();
 
 setActive(btn);
@@ -1837,7 +2124,7 @@ page.innerHTML = `
 class="back"
 onclick="dashboardPage(document.querySelector('.menu button'))">
 
-← Back to Dashboard
+${lang.backDash}
 
 </button>
 
@@ -1846,10 +2133,10 @@ onclick="dashboardPage(document.querySelector('.menu button'))">
 
 <div>
 
-<h1>Loan Applications</h1>
+<h1>${lang.menuApp}</h1>
 
 <p>
-Track all loan applications
+${lang.trackApp}
 </p>
 
 </div>
@@ -1858,7 +2145,7 @@ Track all loan applications
 class="btn"
 onclick="openApplicationModal()">
 
-+ Add Application
+${lang.addAppBtn}
 
 </button>
 
@@ -1874,12 +2161,12 @@ onclick="openApplicationModal()">
 <tr>
 
 <th>Application</th>
-<th>Customer</th>
-<th>Loan Type</th>
-<th>Amount</th>
-<th>Bank</th>
-<th>Status</th>
-<th>Updated</th>
+<th>${lang.colCus}</th>
+<th>${lang.lblLoanTy}</th>
+<th>${lang.colAmt}</th>
+<th>${lang.lblBank}</th>
+<th>${lang.colStat}</th>
+<th>${lang.colUpdate}</th>
 
 </tr>
 
@@ -1953,7 +2240,7 @@ ${a.updated}
 <td colspan="7"
 style="text-align:center;padding:40px">
 
-No applications yet.
+${lang.noData}
 
 </td>
 
@@ -1979,7 +2266,7 @@ No applications yet.
 ===================================================== */
 
 function followupPage(btn) {
-
+const lang = langDict[currentLang];
 hideAll();
 
 setActive(btn);
@@ -1996,7 +2283,7 @@ page.innerHTML = `
 class="back"
 onclick="dashboardPage(document.querySelector('.menu button'))">
 
-← Back to Dashboard
+${lang.backDash}
 
 </button>
 
@@ -2005,10 +2292,10 @@ onclick="dashboardPage(document.querySelector('.menu button'))">
 
 <div>
 
-<h1>Follow Up</h1>
+<h1>${lang.followTitle}</h1>
 
 <p>
-Customer follow-up management
+${lang.followSub}
 </p>
 
 </div>
@@ -2018,7 +2305,7 @@ Customer follow-up management
 
 <div class="section">
 
-<h3>Recent Customer Updates</h3>
+<h3>${lang.recentUpdate}</h3>
 
 ${customers.slice(0,10).map(c => `
 
@@ -2033,7 +2320,7 @@ ${c.phone}
 <p>
 ${c.events && c.events[0]
 ? c.events[0][1]
-: "No update"}
+: lang.noUpdate}
 </p>
 
 <button
@@ -2041,7 +2328,7 @@ class="btn"
 style="padding:7px 12px"
 onclick="addUpdate(${c.id})">
 
-Add Follow Up
+${lang.addUpdateBtn}
 
 </button>
 
@@ -2061,7 +2348,7 @@ Add Follow Up
 ===================================================== */
 
 function reportsPage(btn) {
-
+const lang = langDict[currentLang];
 hideAll();
 
 setActive(btn);
@@ -2096,7 +2383,7 @@ page.innerHTML = `
 class="back"
 onclick="dashboardPage(document.querySelector('.menu button'))">
 
-← Back to Dashboard
+${lang.backDash}
 
 </button>
 
@@ -2105,10 +2392,10 @@ onclick="dashboardPage(document.querySelector('.menu button'))">
 
 <div>
 
-<h1>Reports</h1>
+<h1>${lang.reportTitle}</h1>
 
 <p>
-CRM performance overview
+${lang.reportSub}
 </p>
 
 </div>
@@ -2121,7 +2408,7 @@ CRM performance overview
 <div class="card">
 
 <div class="card-title">
-CUSTOMERS
+${lang.totalCus}
 </div>
 
 <div class="card-number">
@@ -2134,7 +2421,7 @@ ${customers.length}
 <div class="card">
 
 <div class="card-title">
-APPLICATIONS
+${lang.appCount}
 </div>
 
 <div class="card-number">
@@ -2147,7 +2434,7 @@ ${apps.length}
 <div class="card">
 
 <div class="card-title">
-APPROVED
+${lang.appr}
 </div>
 
 <div class="card-number">
@@ -2159,111 +2446,4 @@ ${approved}
 
 <div class="card">
 
-<div class="card-title">
-TOTAL APPLICATION
-</div>
-
-<div class="card-number">
-RM ${totalAmount.toLocaleString()}
-</div>
-
-</div>
-
-</div>
-
-
-<div class="section">
-
-<h3>Loan Type Summary</h3>
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>Loan Type</th>
-<th>Customers</th>
-<th>Applications</th>
-<th>Total Amount</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-${[
-"Personal Loan",
-"Debt Consolidation",
-"Housing Loan",
-"Car Loan",
-"Business Loan",
-"Credit Card",
-"Refinancing",
-"Other"
-].map(type => {
-
-let cs =
-customers.filter(
-c => c.loanType === type
-).length;
-
-let as =
-apps.filter(
-a => a.loanType === type
-);
-
-let amount =
-as.reduce(
-(s,a) => s + Number(a.amount || 0),
-0
-);
-
-return `
-
-<tr>
-
-<td>
-<b>${type}</b>
-</td>
-
-<td>
-${cs}
-</td>
-
-<td>
-${as.length}
-</td>
-
-<td>
-RM ${amount.toLocaleString()}
-</td>
-
-</tr>
-
-`;
-
-}).join("")}
-
-</tbody>
-
-</table>
-
-</div>
-
-`;
-
-}
-
-
-/* =====================================================
-   INITIAL LOAD
-===================================================== */
-
-renderCustomers();
-
-</script>
-
-</body>
-</html>
+<div class="card
