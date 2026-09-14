@@ -37,6 +37,7 @@ th{background:#f0f3f9}
 <body>
 
 <script>
+// 双语文字库
 const texts = {
 en:{
 title:"ClientFlow CRM",
@@ -111,12 +112,12 @@ document.getElementById("thAct").innerText = t.action;
 document.getElementById("logoutBtn").innerText = t.logout;
 document.getElementById("totalCusText").innerText = t.totalCustomer;
 document.getElementById("totalLoanText").innerText = t.totalLoanSum;
-renderCustomerTable();
+renderCustomers();
 calcSummary();
 }
 </script>
 
-<!-- 登录页面 -->
+<!-- 登录界面 -->
 <div id="loginPage" class="loginWrap">
 <h2 id="loginTitle">Staff Login</h2>
 <div class="formRow">
@@ -130,7 +131,7 @@ calcSummary();
 <button id="loginBtn" onclick="doLogin()">Login</button>
 </div>
 
-<!-- 主系统 贷款CRM面板 -->
+<!-- CRM主面板 -->
 <div id="dashPage" class="container dashboard">
 <header>
 <h2 id="dashTitle">ClientFlow CRM</h2>
@@ -146,7 +147,7 @@ calcSummary();
 <button id="navCus" onclick="switchTab('tabCustomer')">Customer List</button>
 </div>
 
-<!-- 仪表盘 统计 -->
+<!-- 仪表盘统计 -->
 <div id="tabDash" class="tabPage active">
 <div class="card">
 <h3 id="totalCusText">Total Customers: <span id="countCus">0</span></h3>
@@ -154,7 +155,7 @@ calcSummary();
 </div>
 </div>
 
-<!-- 客户&贷款列表 -->
+<!-- 客户贷款列表 -->
 <div id="tabCustomer" class="tabPage">
 <div class="card">
 <h3 id="addCusTxt">Add New Customer</h3>
@@ -198,12 +199,12 @@ calcSummary();
 </div>
 
 <script>
-//员工账号
+// 登录账号
 const staffUser = "staff";
 const staffPwd = "123456";
 let customerList = [];
 
-//登录
+// 登录逻辑
 function doLogin(){
 const u = document.getElementById("userInput").value.trim();
 const p = document.getElementById("pwdInput").value.trim();
@@ -211,12 +212,13 @@ if(u === staffUser && p === staffPwd){
 document.getElementById("loginPage").style.display="none";
 document.getElementById("dashPage").style.display="block";
 calcSummary();
-renderCustomerTable();
+renderCustomers();
 }else{
 alert(currentLang==="zh"?"账号或密码错误":"Wrong username or password");
 }
 }
-//退出
+
+// 退出登录
 function logout(){
 document.getElementById("loginPage").style.display="block";
 document.getElementById("dashPage").style.display="none";
@@ -224,7 +226,7 @@ document.getElementById("userInput").value="";
 document.getElementById("pwdInput").value="";
 }
 
-//切换页面标签
+// 切换标签页
 function switchTab(tabId){
 document.querySelectorAll(".tabPage").forEach(t=>t.classList.remove("active"));
 document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
@@ -232,7 +234,7 @@ document.getElementById(tabId).classList.add("active");
 event.target.classList.add("active");
 }
 
-//新增客户贷款资料
+// 新增客户
 function addCustomer(){
 const name = document.getElementById("cusName").value.trim();
 const phone = document.getElementById("cusPhone").value.trim();
@@ -245,17 +247,16 @@ alert(currentLang==="zh"?"姓名必填":"Name is required");
 return;
 }
 customerList.push({name,phone,loanType,loanAmt,status,remark,id:Date.now()});
-//清空输入框
 document.getElementById("cusName").value="";
 document.getElementById("cusPhone").value="";
 document.getElementById("loanAmt").value="";
 document.getElementById("cusRemark").value="";
-renderCustomerTable();
+renderCustomers();
 calcSummary();
 }
 
-//渲染客户表格
-function renderCustomerTable(){
+// 渲染客户表格
+function renderCustomers(){
 const tbody = document.getElementById("customerTableBody");
 tbody.innerHTML="";
 const t=texts[currentLang];
@@ -279,22 +280,25 @@ tbody.appendChild(tr);
 })
 }
 
-// 删除客户（带确认弹窗）
+// 删除客户，带确认弹窗
 function deleteCustomer(id){
 if(confirm(texts[currentLang].confirmDel)){
 customerList = customerList.filter(c=>c.id !== id);
-renderCustomerTable();
+renderCustomers();
 calcSummary();
 }
 }
 
-//仪表盘统计总数、贷款总额
+// 仪表盘统计
 function calcSummary(){
 document.getElementById("countCus").innerText = customerList.length;
 let total = 0;
 customerList.forEach(i=> total += Number(i.loanAmt));
 document.getElementById("sumLoan").innerText = total;
 }
+
+// 页面载入初始化
+renderCustomers();
 </script>
 </body>
 </html>
